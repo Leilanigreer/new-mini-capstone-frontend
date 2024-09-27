@@ -3,7 +3,7 @@ export function ProductsNew( { onCreate }){
   const handleSubmit = (event) =>{
     event.preventDefault();
     const params = new FormData(event.target);
-    onCreate(params, () => event.target.resest())
+    onCreate(params, () => event.target.resest());
   };
 
   return(
@@ -17,7 +17,10 @@ export function ProductsNew( { onCreate }){
           Price: <input name="price" type="text" />
         </div>
         <div>
-          Main Image: <input name="url" type="text"/>
+          Description: <input name="description" type="text"/>
+        </div>
+        <div>
+          Supplier ID: <input name="supplier_id" type="text"/>
         </div>
         <div>
           <button type="submit">Add product</button>

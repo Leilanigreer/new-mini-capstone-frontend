@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ProductsIndex } from './ProductsIndex';
 import { ProductsNew } from './ProductsNew';
@@ -14,22 +14,10 @@ export function ProductsPage() {
 
   const handleCreate = (params, successCallback) => {
     console.log("handleCreate");
-
-    // Log the form data
-    console.log("Form data:");
-    for (let [key, value] of params.entries()) {
-      console.log(key + ': ' + value);
-    }
-
-    // Convert FormData to a plain object
-    const formDataObject = Object.fromEntries(params.entries());
-    console.log("Form data as object:", formDataObject);
-
-    // Uncomment the following lines when ready to send to the API
-    // axios.post("http://localhost:3000/products.json", params).then((response) => {
-    //   setProducts([...products, response.data]);
-    //   successCallback();
-    // });
+    axios.post("http://localhost:3000/products.json", params).then((response) => {
+      setProducts([...products, response.data]);
+      successCallback();
+    });
   };
 
   useEffect(handleIndex, []);
