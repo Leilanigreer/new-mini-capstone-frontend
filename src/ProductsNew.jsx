@@ -3,7 +3,7 @@ export function ProductsNew( { onCreate }){
   const handleSubmit = (event) =>{
     event.preventDefault();
     const params = new FormData(event.target);
-    onCreate(params, () => event.target.resest());
+    onCreate(params, () => event.target.reset());
   };
 
   return(
