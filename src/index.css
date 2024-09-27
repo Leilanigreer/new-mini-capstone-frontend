@@ -1,3 +1,12 @@
 html {
   scroll-behavior: smooth;
 }
+
+img {
+  width: 400px;
+  /* Set a fixed width */
+  height: 400px;
+  /* Set a fixed height */
+  object-fit: cover;
+  /* This ensures the image covers the area without distortion */
+}
