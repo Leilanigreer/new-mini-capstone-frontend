@@ -9,6 +9,7 @@ import { SignupPage } from "./SignupPage";
 import { LoginPage } from "./LoginPage";
 import { CartedProductIndex } from "./CartedProductsIndex";
 import { OrdersIndex } from "./OrdersIndex";
+import { OrdersShow } from "./OrdersShow";
 
 const router = createBrowserRouter([
   {
@@ -41,9 +42,14 @@ const router = createBrowserRouter([
       path: "/orders",
       element: <OrdersIndex />,
       loader: () => axios.get("http://localhost:3000/orders.json").then(response => response.data)
-    }
-  ]
-}])
+    },
+    {
+      path: "/orders/:id",
+      element: <OrdersShow />,
+      loader: ({params}) => axios.get(`http://localhost:3000/orders/${params.id}.json`).then(response => response.data)
+    },
+  ],
+}]);
 
 function App() {
   return (
