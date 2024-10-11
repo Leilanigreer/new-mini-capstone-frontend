@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 
 export function OrdersShow () {
   const order = useLoaderData () ;
@@ -24,6 +24,7 @@ export function OrdersShow () {
           </div>
         ))}
         <hr />
+        <Link to="/orders">Back to Orders</Link>
       </div>
     </div>
   )

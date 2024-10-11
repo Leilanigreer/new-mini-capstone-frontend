@@ -1,13 +1,8 @@
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 
 export function OrdersIndex () {
   const orders = useLoaderData ();
   console.log(orders)
-
-  const handleOrderShow = (event) => {
-    event.preventDefault();
-    console.log("handle Order Show")
-  }
 
   return (
     <div>
@@ -19,7 +14,7 @@ export function OrdersIndex () {
           <p>Subtotal: {order.subtotal}</p>
           <p>Tax: {order.tax}</p>
           <p>Total: {order.total}</p>
-          <button onClick={handleOrderShow}>See details</button>
+          <Link to={`/orders/${order.id}`}>See details</Link>
           <br></br>
         </div>
       ))}

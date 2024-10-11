@@ -10,6 +10,7 @@ import { LoginPage } from "./LoginPage";
 import { CartedProductIndex } from "./CartedProductsIndex";
 import { OrdersIndex } from "./OrdersIndex";
 import { OrdersShow } from "./OrdersShow";
+import { ProductsNew } from "./ProductsNew";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       path: "/orders/:id",
       element: <OrdersShow />,
       loader: ({params}) => axios.get(`http://localhost:3000/orders/${params.id}.json`).then(response => response.data)
+    },
+    {
+      path: "/products/new",
+      element: <ProductsNew />,
     },
   ],
 }]);

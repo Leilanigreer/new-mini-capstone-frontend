@@ -1,10 +1,12 @@
-export function ProductsNew( { onCreate }){
+import axios from "axios";
+export function ProductsNew(){
   
   const handleSubmit = (event) =>{
     event.preventDefault();
     const params = new FormData(event.target);
-    onCreate(params, () => event.target.reset());
+    axios.post("http://localhost:3000/products.json", params)
   };
+
 
   return(
     <div>
