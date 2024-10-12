@@ -4,13 +4,13 @@ import axios from "axios"
 import { Header } from "./Header";
 import { ProductsPage } from "./ProductsPage";
 import { Footer } from "./Footer";
-import { LogoutLink } from "./LogoutLink";
 import { SignupPage } from "./SignupPage";
 import { LoginPage } from "./LoginPage";
 import { CartedProductIndex } from "./CartedProductsIndex";
 import { OrdersIndex } from "./OrdersIndex";
 import { OrdersShow } from "./OrdersShow";
 import { ProductsNew } from "./ProductsNew";
+// import { LogoutLink } from "./LogoutLink";
 
 const router = createBrowserRouter([
   {
