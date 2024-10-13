@@ -20,6 +20,7 @@ export function CartedProductIndex () {
           <div key={cp.id}>
             <p>Product: {cp.product.name}</p>
             <p>Cost: ${cp.product.price}</p>
+            <p>Quantity: ${cp.product_quantity}</p>
             <p>Sum for {cp.product.name}: ${cp.total_carted_price}</p>
             <br></br>
           </div>

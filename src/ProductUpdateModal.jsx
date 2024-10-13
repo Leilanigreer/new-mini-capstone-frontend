@@ -1,7 +1,7 @@
 import "./Modal.css";
 
-export function Modal({ children, show, onClose }) {
-  if (show) {
+export function ProductUpdateModal({ children, edit, onClose }) {
+  if (edit) {
     return (
       <div className="modal-background">
         <section className="modal-main">

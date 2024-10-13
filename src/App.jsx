@@ -10,6 +10,7 @@ import { CartedProductIndex } from "./CartedProductsIndex";
 import { OrdersIndex } from "./OrdersIndex";
 import { OrdersShow } from "./OrdersShow";
 import { ProductsNew } from "./ProductsNew";
+import { WelcomePage } from "./Welcome";
 // import { LogoutLink } from "./LogoutLink";
 
 const router = createBrowserRouter([
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
   ),
   children: [
     {
+      path: "/",
+      element: <WelcomePage />,
+    }, 
+    {
       path: "/signup",
       element: <SignupPage />,
     }, 
@@ -31,13 +36,13 @@ const router = createBrowserRouter([
       element: <LoginPage />,
     }, 
     {
-      path: "/",
+      path: "/products",
       element: <ProductsPage />,
     }, 
     {
-      path: "/carted-products",
+      path: "/carted_products",
       element: <CartedProductIndex />,
-      loader: () => axios.get("http://localhost:3000/carted-products.json").then(response => response.data)
+      loader: () => axios.get("http://localhost:3000/carted_products.json").then(response => response.data)
     },
     {
       path: "/orders",
