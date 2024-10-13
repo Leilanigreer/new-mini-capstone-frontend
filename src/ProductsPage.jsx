@@ -80,7 +80,10 @@ export function ProductsPage() {
         onAddToCart={handleAddToCart}
         />
       <ProductShowModal show={isProductsShowVisible} onClose={handleCloseShow}>
-        <ProductsShow product={currentProduct} onUpdate={handleUpdate} onDestroy={handleDestroy} />
+        <ProductsShow 
+        product={currentProduct} 
+        onAddToCart={handleAddToCart} 
+        />
       </ProductShowModal>
       <ProductUpdateModal edit={isProductsEditVisable} onClose={handleCloseEdit}>
         <ProductUpdate product={currentProduct} onUpdate={handleUpdate} onDestroy={handleDestroy} />

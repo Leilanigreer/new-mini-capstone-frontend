@@ -1,4 +1,6 @@
-export function ProductsShow({ product }) {
+import { CartedProductsNew } from "./CartedProductsNew";
+
+export function ProductsShow({ product, onAddToCart }) {
   
   return (
     <div>
@@ -8,6 +10,10 @@ export function ProductsShow({ product }) {
       <p>Description: {product.description}</p>
       <p>Supplier: {product.supplier.name}</p>
       <br></br>
+      <CartedProductsNew
+          product={product}
+          onAddToCart={onAddToCart}
+          />
     </div>
   );
 }
