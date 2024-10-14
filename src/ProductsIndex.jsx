@@ -1,11 +1,15 @@
 import { CartedProductsNew } from "./CartedProductsNew"
+import { useState } from "react";
 
 export function ProductsIndex({products, onShow, onAddToCart, onEdit}) {
   // console.log('hello')
+  const [searchFilter, setSearchFilter] = useState("");
+
   return(
     <div>
       {/* <h1>Hello All</h1> */}
-      {products.map((product) => (
+      Search filter: <input type="text" value={searchFilter} onChange={(event) => setSearchFilter(event.target.value)} />
+      {products.filter((product) => product.name.toLowerCase().includes(searchFilter.toLocaleLowerCase())).map((product) => (
         <div key={product.id}>
           <h3>{product.name}</h3>
           <p>{product.price}</p>
