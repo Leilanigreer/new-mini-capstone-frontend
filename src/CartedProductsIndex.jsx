@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-import axios from "axios";
+import apiClient from "./config/axios";
 
 export function CartedProductIndex () {
   const carted_products = useLoaderData();
@@ -8,7 +8,7 @@ export function CartedProductIndex () {
   const handleCheckout = (event) => {
     event.preventDefault();
     console.log("handle Checkout")
-    axios.post("http://localhost:3000/orders.json")
+    apiClient.post("/orders.json")
   }
 
   return (

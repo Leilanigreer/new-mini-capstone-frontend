@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import apiClient from "./config/axios";
 
 export function CartedProductsNew ({ product, onAddToCart }) {
   const [productQuantity, setProductQuantity] = useState(1);
@@ -12,7 +12,7 @@ export function CartedProductsNew ({ product, onAddToCart }) {
       product_quantity: productQuantity,
     };
     
-    axios.post("http://localhost:3000/carted_products.json", params)
+    apiClient.post("/carted_products.json", params)
     .then((response) => {
       console.log("Product added to cart:", response.data);
       onAddToCart(response.data);

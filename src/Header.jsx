@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { LogoutLink } from "./LogoutLink";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import apiClient from "./config/axios";
 
 
 
@@ -10,7 +10,7 @@ export function Header() {
 
   const getUserData = () => {
     // console.log("getting user data")
-    axios.get("http://localhost:3000/users/current.json").then(response => {
+    apiClient.get("/current.json").then(response => {
       console.log(response.data)
       setCurrentUser(response.data)
     })

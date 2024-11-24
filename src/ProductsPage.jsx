@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from "./config/axios";
 import { ProductsIndex } from './ProductsIndex';
 import { ProductShowModal } from './ProductShowModal';
 import { ProductsShow } from './ProductsShow';
@@ -14,7 +14,7 @@ export function ProductsPage() {
   const [isProductsEditVisable, setIsProductsEditVisable] = useState(false)
 
   const handleIndex = () => {
-    axios.get("http://localhost:3000/products.json").then((response) => {
+    apiClient.get("/products.json").then((response) => {
       setProducts(response.data);
     });
   };
@@ -33,7 +33,7 @@ export function ProductsPage() {
 
   const handleUpdate = ( id, params, successCallback ) =>{
     // console.log("handleUpdate", params);
-    axios.patch(`http://localhost:3000/products/${id}.json`, params).then((response) => {
+    apiClient.patch(`/products/${id}.json`, params).then((response) => {
       setProducts(
         products.map((product) => {
           if (product.id === response.data.id) {
@@ -50,7 +50,7 @@ export function ProductsPage() {
 
   const handleDestroy = (id) => {
     // console.log("handleDestroy", id);
-    axios.delete(`http://localhost:3000/products/${id}.json`).then(() => {
+    apiClient.delete(`/products/${id}.json`).then(() => {
       setProducts(products.filter((product) => product.id !== id));
       handleCloseEdit();
     });

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import apiClient from "./config/axios";
 
 
 export function ProductsNew(){
@@ -9,7 +9,7 @@ export function ProductsNew(){
     event.preventDefault();
     const params = new FormData(event.target);
 
-    axios.post("http://localhost:3000/products.json", params)
+    apiClient.post("/products.json", params)
     .then(response => {
       const productName = params.get("name");
       setNotification({
