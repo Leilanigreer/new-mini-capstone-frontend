@@ -1,97 +1,105 @@
-import { Link } from "react-router-dom";
-import { LogoutLink } from "./LogoutLink";
-import { useEffect, useState } from "react";
-import apiClient from "./config/axios";
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
+import { LogoutLink } from './LogoutLink';
+import apiClient from './config/axios';
 
-
-
-export function Header() {
-  const [currentUser, setCurrentUser] = useState ({})
+const Header = () => {
+  const [currentUser, setCurrentUser] = useState({});
+  const [isOpen, setIsOpen] = useState(false);
 
   const getUserData = () => {
-    // console.log("getting user data")
-    apiClient.get("/current.json").then(response => {
-      console.log(response.data)
-      setCurrentUser(response.data)
-    })
-  }
+    apiClient.get('/current.json').then(response => {
+      setCurrentUser(response.data);
+    });
+  };
 
-  useEffect(getUserData, [])
+  useEffect(getUserData, []);
 
-  let authenticationLinks;
-  // let user;
-  
-  if (localStorage.jwt === undefined) {
-    authenticationLinks = (
-      <>
-      <Link to="/signup">Signup</Link> | 
-      <Link to="/login">Login</Link> 
-      </>
-    )
-  } else {
-    authenticationLinks = (
-        <LogoutLink /> 
-    )
-  }
+  const authenticationLinks = localStorage.jwt === undefined ? (
+    <div className="flex gap-4">
+      <Link to="/signup" className="text-green-700 hover:text-green-900">Signup</Link>
+      <Link to="/login" className="text-green-700 hover:text-green-900">Login</Link>
+    </div>
+  ) : (
+    <LogoutLink />
+  );
+
+  const navLinks = [
+    { href: '/', text: 'Home' },
+    { href: '/products', text: 'Browse' },
+    { href: '/carted_products', text: 'Shopping Cart' },
+    { href: '/orders', text: 'My Orders' },
+    { href: '/products/new', text: 'Create new product' },
+  ];
 
   return (
-    <header>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary">
-<div className="container-fluid">
-  <a className="navbar-brand" href="#">Shopping 4 Us</a>
-  <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span className="navbar-toggler-icon"></span>
-  </button>
-  <div className="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-      <li className="nav-item">
-        <a className="nav-link active" aria-current="page" href="/">Home</a>
-      </li>
-      <li className="nav-item">
-        <a className="nav-link" href="/products">Browse</a>
-      </li>
-      <li className="nav-item">
-        <a className="nav-link" href="/carted_products">Shopping Cart</a>
-      </li>
-      <li className="nav-item">
-        <a className="nav-link" href="/orders">My Orders</a>
-      </li>
-      <li className="nav-item">
-        <a className="nav-link" href="/products/new">Create new product</a>
-      </li>
-      <li className="nav-item">
-        <a className="nav-link" href="/products/new">Create new product</a>
-      </li>
+    <header className="bg-white shadow-sm">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          {/* Logo and brand */}
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center">
+              <span className="text-2xl font-bold text-green-800">Shopping 4 US</span>
+            </Link>
+          </div>
 
-      {/* <li className="nav-item dropdown">
-        <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          Dropdown
-        </a>
-        <ul className="dropdown-menu">
-          <li><a className="dropdown-item" href="#">Action</a></li>
-          <li><a className="dropdown-item" href="#">Another action</a></li>
-          <li><hr className="dropdown-divider"></li>
-          <li><a className="dropdown-item" href="#">Something else here</a></li>
-        </ul>
-      </li> */}
-      <li className="nav-item">
-        <a className="nav-link disabled" aria-disabled="true">Disabled</a>
-      </li>
-    </ul>
-    {/* <form className="d-flex" role="search">
-      <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-      <button className="btn btn-outline-success" type="submit">Search</button>
-    </form> */}
-  </div>
-</div>
-{/* 
-        <a href="/">Home</a> | <Link to="/products">Browse</Link> | <Link to="/carted_products">Shopping Cart</Link> | <Link to="/orders">My Orders</Link> | <Link to="/products/new">Create new product</Link> | {authenticationLinks} */}
+          {/* Desktop navigation */}
+          <div className="hidden md:flex md:items-center md:space-x-6">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className="text-gray-700 hover:text-green-800 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                {link.text}
+              </Link>
+            ))}
+            <div className="pl-6 border-l border-gray-200">
+              {authenticationLinks}
+            </div>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="flex items-center md:hidden">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-green-800 hover:bg-gray-100"
+            >
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile menu */}
+        <div className={`${isOpen ? 'block' : 'hidden'} md:hidden`}>
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-green-800 hover:bg-gray-100"
+                onClick={() => setIsOpen(false)}
+              >
+                {link.text}
+              </Link>
+            ))}
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              {authenticationLinks}
+            </div>
+          </div>
+        </div>
       </nav>
-      <h2>Hello, {currentUser.name} </h2>
+      
+      {currentUser.name && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+          <h2 className="text-lg font-medium text-gray-900">
+            Hello, {currentUser.name}
+          </h2>
+        </div>
+      )}
     </header>
-  )
-}
+  );
+};
 
-
-{/* <nav className="navbar navbar-expand-lg bg-body-tertiary">
-</nav> */}
+export default Header;

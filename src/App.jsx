@@ -1,6 +1,6 @@
 import {createBrowserRouter, RouterProvider, Outlet } from "react-router-dom"
 import apiClient from "./config/axios";
-import { Header } from "./Header";
+import Header from "./Header";
 import { ProductsPage } from "./ProductsPage";
 import { Footer } from "./Footer";
 import { SignupPage } from "./SignupPage";
