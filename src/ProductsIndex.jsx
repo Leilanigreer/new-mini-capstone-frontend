@@ -1,28 +1,83 @@
 import { CartedProductsNew } from "./CartedProductsNew"
 import { useState } from "react";
+import { Search } from 'lucide-react';
+
 
 export function ProductsIndex({products, onShow, onAddToCart, onEdit}) {
-  // console.log('hello')
   const [searchFilter, setSearchFilter] = useState("");
 
   return(
-    <div>
-      {/* <h1>Hello All</h1> */}
-      Search filter: <input type="text" value={searchFilter} onChange={(event) => setSearchFilter(event.target.value)} />
-      {products.filter((product) => product.name.toLowerCase().includes(searchFilter.toLocaleLowerCase())).map((product) => (
-        <div key={product.id}>
-          <h3>{product.name}</h3>
-          <p>{product.price}</p>
-          <img src={product.images[0] && product.images[0].url} />
-          <button onClick={() => onShow(product)}>More info</button>
-          <button onClick={() => onEdit(product)}>Edit</button>
-          <CartedProductsNew
-          product={product}
-          onAddToCart={onAddToCart}
-          />
-        <hr />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-8">
+        <div className="relative max-w-md mx-auto">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
+          <input 
+          type="text" 
+          value={searchFilter} 
+          onChange={(event) => setSearchFilter(event.target.value)} 
+          className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white 
+                     placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 
+                     focus:ring-green-700 focus:border-green-700 sm:text-sm"
+            placeholder="Search products..."
+            />
+          </div>
         </div>
-      ))}
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {products.filter((product) => product.name.toLowerCase().includes(searchFilter.toLocaleLowerCase())).map((product) => (
+            <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            <div className="relative aspect-square overflow-hidden bg-gray-200">
+              {product.images[0] && product.images[0].url ? (
+                <img
+                  src={product.images[0].url}
+                  alt={product.name}
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full bg-gray-100">
+                  <span className="text-gray-400">No image available</span>
+                </div>
+              )}
+            </div>
+            <div className="p-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  {product.name}
+                </h3>
+                <p className="text-green-700 font-medium text-lg mb-4">
+                  ${parseFloat(product.price).toFixed(2)}
+                </p>
+
+                {/* Buttons Container */}
+                <div className="space-y-2">
+                  <button
+                    onClick={() => onShow(product)}
+                    className="w-full bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800 
+                             transition-colors duration-200"
+                  >
+                    More Info
+                  </button>
+                  
+                  <button
+                    onClick={() => onEdit(product)}
+                    className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 
+                             transition-colors duration-200"
+                  >
+                    Edit
+                  </button>
+
+                  <div className="pt-2">
+                    <CartedProductsNew
+                      product={product}
+                      onAddToCart={onAddToCart}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+      </div>
     </div>
   );
 }
