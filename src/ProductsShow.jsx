@@ -1,21 +1,46 @@
 import { CartedProductsNew } from "./CartedProductsNew";
+import { useState } from "react";
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export function ProductsShow({ product, onAddToCart }) {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => 
+      (prev + 1) % product.images_with_default.length
+    );
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => 
+      (prev - 1 + product.images_with_default.length) % product.images_with_default.length
+    );
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Product Image Section */}
           <div className="relative aspect-square bg-gray-100">
-            {product.images && product.images[0] ? (
-              <img
-                src={product.images[0].url}
-                alt={product.name}
-                className="object-cover w-full h-full"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full">
-                <span className="text-gray-400">No image available</span>
+            <img
+              src={product.images_with_default[currentImageIndex].url}
+              alt={product.name}
+              className="object-cover w-full h-full"
+            />
+            {product.images_with_default.length > 1 && (
+              <div className="absolute bottom-2 w-full flex justify-between items-center px-2">
+                <button 
+                  onClick={prevImage}
+                  className="bg-black bg-opacity-50 p-1 rounded-full hover:bg-opacity-75 transition-opacity duration-200"
+                >
+                  <ChevronLeft className="h-5 w-5 text-white" />
+                </button>
+                <button 
+                  onClick={nextImage}
+                  className="bg-black bg-opacity-50 p-1 rounded-full hover:bg-opacity-75 transition-opacity duration-200"
+                >
+                  <ChevronRight className="h-5 w-5 text-white" />
+                </button>
               </div>
             )}
           </div>
