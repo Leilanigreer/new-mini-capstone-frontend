@@ -1,55 +1,118 @@
 import { useState } from "react";
 import apiClient from "./config/axios";
+import { Plus } from "lucide-react";
 
-
-export function ProductsNew(){
-  const [notification, setNotification] = useState(null)
+export function ProductsNew() {
+  const [notification, setNotification] = useState(null);
+  const [imageUrls, setImageUrls] = useState([""]);
   
-  const handleSubmit = (event) =>{
+  const addImage = () => {
+    setImageUrls([...imageUrls, ""]);
+  };
+
+  const handleSubmit = (event) => {
     event.preventDefault();
     const params = new FormData(event.target);
-
+    
     apiClient.post("/products.json", params)
-    .then(response => {
-      const productName = params.get("name");
-      setNotification({
-        type: "success",
-        message: `${productName} has been created successfully!`
+      .then(response => {
+        const productName = params.get("name");
+        setNotification({
+          type: "success",
+          message: `${productName} has been created successfully!`
+        });
+        event.target.reset();
+        setTimeout(() => setNotification(null), 5000);
       });
-      event.target.reset();
-      setTimeout(() => setNotification(null), 5000)
-    })
   };
 
   const handleCloseNotification = () => {
     setNotification(null);
   };
 
-  return(
-    <div>
-      <h1>Make a new product here:</h1>
+  return (
+    <div className="max-w-2xl mx-auto p-6">
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Create New Product</h1>
+      
       {notification && (
-        <div className={`alert alert-${notification.type} alert-dismissible fade show`} role="alert">
-          {notification.message}
-          <button type="button" className="btn-close" onClick={handleCloseNotification}  aria-label="Close"></button>
+        <div className={`mb-4 p-4 rounded-md ${notification.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
+          <div className="flex justify-between items-center">
+            <p>{notification.message}</p>
+            <button onClick={handleCloseNotification} className="text-gray-500 hover:text-gray-700">x</button>
+          </div>
         </div>
       )}
-      <form onSubmit={handleSubmit}>
-        <div>
-          Name: <input name="name" type="text" />
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <input 
+              name="name" 
+              type="text" 
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
+            <input 
+              name="price" 
+              type="text" 
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea 
+              name="description" 
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              rows="3"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Supplier ID</label>
+            <input 
+              name="supplier_id" 
+              type="text" 
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
         </div>
-        <div>
-          Price: <input name="price" type="text" />
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-medium text-gray-900">Product Images</h2>
+            <button 
+              type="button"
+              onClick={addImage} 
+              className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              Add Image
+            </button>
+          </div>
+
+          {imageUrls.map((imageUrl, index) => (
+            <div key={index}>
+              <input 
+                type="text" 
+                name="image_urls[]" 
+                placeholder="Enter image URL"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+          ))}
         </div>
-        <div>
-          Description: <input name="description" type="text"/>
-        </div>
-        <div>
-          Supplier ID: <input name="supplier_id" type="text"/>
-        </div>
-        <div>
-          <button type="submit" className="btn btn-primary">Add product</button>
-        </div>
+
+        <button 
+          type="submit" 
+          className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+        >
+          Create Product
+        </button>
       </form>
     </div>
   );
