@@ -10,17 +10,22 @@ import { OrdersIndex } from "./OrdersIndex";
 import { OrdersShow } from "./OrdersShow";
 import { ProductsNew } from "./ProductsNew";
 import { WelcomePage } from "./Welcome";
-// import { LogoutLink } from "./LogoutLink";
+
+const Layout = () => {
+  return (
+    <div className="min-h-screen w-full flex-col">
+      <Header />
+      <main className="flex-grow w-full">
+        <Outlet />
+      </main>
+      <Footer />
+    </div>
+  );
+};
 
 const router = createBrowserRouter([
   {
-  element: (
-    <div>
-      <Header />
-      <Outlet />
-      <Footer />
-    </div>
-  ),
+  element: <Layout />,
   children: [
     {
       path: "/",
@@ -64,7 +69,7 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <div className="container">
+    <div className="w-full min-h-screen overflow-x-hidden">
     <RouterProvider router={router} />
     </div>
     )
