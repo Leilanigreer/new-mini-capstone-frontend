@@ -37,6 +37,7 @@ const router = createBrowserRouter([
     {
       path: "/products",
       element: <ProductsPage />,
+      loader: () => apiClient.get("/suppliers.json").then(response => response.data)
     }, 
     {
       path: "/carted_products",
@@ -56,6 +57,7 @@ const router = createBrowserRouter([
     {
       path: "/products/new",
       element: <ProductsNew />,
+      loader: () => apiClient.get("/suppliers.json").then(response => response.data)
     },
   ],
 }]);

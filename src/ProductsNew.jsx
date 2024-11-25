@@ -1,10 +1,12 @@
 import { useState } from "react";
 import apiClient from "./config/axios";
 import { Plus } from "lucide-react";
+import { useLoaderData } from "react-router-dom";
 
 export function ProductsNew() {
   const [notification, setNotification] = useState(null);
   const [imageUrls, setImageUrls] = useState([""]);
+  const suppliers = useLoaderData ();
   
   const addImage = () => {
     setImageUrls([...imageUrls, ""]);
@@ -15,6 +17,7 @@ export function ProductsNew() {
     const params = new FormData(event.target);
     
     apiClient.post("/products.json", params)
+      // eslint-disable-next-line no-unused-vars
       .then(response => {
         const productName = params.get("name");
         setNotification({
@@ -73,12 +76,16 @@ export function ProductsNew() {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Supplier ID</label>
-            <input 
+            <label className="block text-sm font-medium text-gray-700 mb-1">Supplier</label>
+            <select 
               name="supplier_id" 
-              type="text" 
+              id="supplier_id"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
+            >
+              {suppliers.map(supplier => (
+                <option key={supplier.id} value={supplier.id}>{supplier.name}</option>
+              ))}
+            </select>  
           </div>
         </div>
 

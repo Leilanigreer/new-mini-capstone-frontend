@@ -5,6 +5,7 @@ import { ProductShowModal } from './ProductShowModal';
 import { ProductsShow } from './ProductsShow';
 import { ProductUpdateModal } from './ProductUpdateModal';
 import { ProductUpdate } from './ProductUpdate';
+import { useLoaderData } from 'react-router-dom';
 
 export function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -12,6 +13,8 @@ export function ProductsPage() {
   const [currentProduct, setCurrentProduct] = useState({});
   const [cartedItems, setCartedItems] = useState ([])
   const [isProductsEditVisable, setIsProductsEditVisable] = useState(false)
+
+  const suppliers = useLoaderData ();
 
   const handleIndex = () => {
     apiClient.get("/products.json").then((response) => {
@@ -74,7 +77,7 @@ export function ProductsPage() {
   return (
     <main>
       <ProductsIndex 
-        products={products} 
+        products={products}
         onShow={handleShow}
         onEdit={handleEdit} 
         onAddToCart={handleAddToCart}
@@ -86,7 +89,11 @@ export function ProductsPage() {
         />
       </ProductShowModal>
       <ProductUpdateModal edit={isProductsEditVisable} onClose={handleCloseEdit}>
-        <ProductUpdate product={currentProduct} onUpdate={handleUpdate} onDestroy={handleDestroy} />
+        <ProductUpdate 
+          product={currentProduct} 
+          suppliers={suppliers} 
+          onUpdate={handleUpdate} 
+          onDestroy={handleDestroy} />
       </ProductUpdateModal>
     </main>
   );
