@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 
 
-export function ProductsIndex({products, onShow, onAddToCart, onEdit}) {
+export function ProductsIndex({products, onShow, onAddToCart, onEdit, userActions}) {
   const [searchFilter, setSearchFilter] = useState("");
   const [currentImageIndexes, setCurrentImageIndexes] = useState({});
 
@@ -84,28 +84,34 @@ export function ProductsIndex({products, onShow, onAddToCart, onEdit}) {
               </p>
 
               <div className="space-y-2">
-                <button
+                {userActions.canViewDetails && ( 
+                  <button
                   onClick={() => onShow(product)}
                   className="w-full bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800 
                            transition-colors duration-200"
                 >
                   More Info
                 </button>
-                
-                <button
-                  onClick={() => onEdit(product)}
-                  className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 
-                           transition-colors duration-200"
-                >
-                  Edit
-                </button>
+                )}
 
-                <div className="pt-2">
-                  <CartedProductsNew
-                    product={product}
-                    onAddToCart={onAddToCart}
-                  />
-                </div>
+                {userActions.canEdit && (
+                  <button
+                    onClick={() => onEdit(product)}
+                    className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 
+                            transition-colors duration-200"
+                  >
+                    Edit
+                  </button>
+                )}
+
+                {userActions.canAddToCart && (
+                  <div className="pt-2">
+                    <CartedProductsNew
+                      product={product}
+                      onAddToCart={onAddToCart}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>

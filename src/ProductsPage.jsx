@@ -6,15 +6,23 @@ import { ProductsShow } from './ProductsShow';
 import { ProductUpdateModal } from './ProductUpdateModal';
 import { ProductUpdate } from './ProductUpdate';
 import { useLoaderData } from 'react-router-dom';
+import { useAuth } from './context/useAuth';
 
 export function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [isProductsShowVisible, setIsProductsShowVisible] = useState(false);
   const [currentProduct, setCurrentProduct] = useState({});
-  const [cartedItems, setCartedItems] = useState ([])
-  const [isProductsEditVisable, setIsProductsEditVisable] = useState(false)
+  const [cartedItems, setCartedItems] = useState ([]);
+  const [isProductsEditVisable, setIsProductsEditVisable] = useState(false);
+  const {isAdmin, isShopper} = useAuth();
 
   const suppliers = useLoaderData ();
+
+  const userActions = {
+    canEdit: isAdmin,
+    canAddToCart: isShopper,
+    canViewDetails: true
+  };
 
   const handleIndex = () => {
     apiClient.get("/products.json").then((response) => {
@@ -81,11 +89,13 @@ export function ProductsPage() {
         onShow={handleShow}
         onEdit={handleEdit} 
         onAddToCart={handleAddToCart}
-        />
+        userActions={userActions}
+      />
       <ProductShowModal show={isProductsShowVisible} onClose={handleCloseShow}>
         <ProductsShow 
         product={currentProduct} 
-        onAddToCart={handleAddToCart} 
+        onAddToCart={handleAddToCart}
+        userActions={userActions} 
         />
       </ProductShowModal>
       <ProductUpdateModal edit={isProductsEditVisable} onClose={handleCloseEdit}>
