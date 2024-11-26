@@ -1,15 +1,69 @@
-import {createBrowserRouter, RouterProvider, Outlet } from "react-router-dom"
+import {createBrowserRouter, RouterProvider, Outlet, Navigate } from "react-router-dom"
 import apiClient from "./config/axios";
-import Header from "./Header";
+import Header from "./components/layout/Header";
 import { ProductsPage } from "./ProductsPage";
-import { Footer } from "./Footer";
-import { SignupPage } from "./SignupPage";
-import { LoginPage } from "./LoginPage";
+import { Footer } from "./components/layout/Footer";
+import { SignupPage } from "./components/auth/SignupPage";
+import { LoginPage } from "./components/auth/LoginPage";
 import { CartedProductIndex } from "./CartedProductsIndex";
 import { OrdersIndex } from "./OrdersIndex";
 import { OrdersShow } from "./OrdersShow";
 import { ProductsNew } from "./ProductsNew";
 import { WelcomePage } from "./Welcome";
+import { AuthProvider } from "./context/AuthProvider";
+import { useAuth } from './context/useAuth';
+
+// const ProtectedRoute = ({ children }) => {
+//   const { isAuthenticated, loading } = useAuth();
+  
+//   if (loading) {
+//     return <div>Loading...</div>; 
+//   }
+  
+//   if (!isAuthenticated) {
+//     return <Navigate to="/login" replace />;
+//   }
+  
+//   return children;
+// };
+
+// Admin route wrapper
+const AdminRoute = ({ children }) => {
+  const { isAdmin, loading } = useAuth();
+  
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  
+  if (!isAdmin) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
+};
+
+// Shopper route wrapper
+const ShopperRoute = ({ children }) => {
+  const { isShopper, loading } = useAuth();
+  
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  
+  if (!isShopper) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
+};
+
+const authLoader = async (path) => {
+  const token = localStorage.getItem('jwt');
+  if (token) {
+    apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  }
+  return apiClient.get(path).then(response => response.data);
+};
 
 const Layout = () => {
   return (
@@ -23,56 +77,79 @@ const Layout = () => {
   );
 };
 
-const router = createBrowserRouter([
-  {
-  element: <Layout />,
-  children: [
-    {
-      path: "/",
-      element: <WelcomePage />,
-    }, 
-    {
-      path: "/signup",
-      element: <SignupPage />,
-    }, 
-    {
-      path: "/login",
-      element: <LoginPage />,
-    }, 
-    {
-      path: "/products",
-      element: <ProductsPage />,
-      loader: () => apiClient.get("/suppliers.json").then(response => response.data)
-    }, 
-    {
-      path: "/carted_products",
-      element: <CartedProductIndex />,
-      loader: () => apiClient.get("/carted_products.json").then(response => response.data)
-    },
-    {
-      path: "/orders",
-      element: <OrdersIndex />,
-      loader: () => apiClient.get("/orders.json").then(response => response.data)
-    },
-    {
-      path: "/orders/:id",
-      element: <OrdersShow />,
-      loader: ({params}) => apiClient.get(`/orders/${params.id}.json`).then(response => response.data)
-    },
-    {
-      path: "/products/new",
-      element: <ProductsNew />,
-      loader: () => apiClient.get("/suppliers.json").then(response => response.data)
-    },
-  ],
-}]);
-
 function App() {
+  const Router = () => {
+    const router = createBrowserRouter([
+      {
+        element: <Layout />,
+        children: [
+          {
+            path: "/",
+            element: <WelcomePage />,
+          },
+          {
+            path: "/signup",
+            element: <SignupPage />,
+          },
+          {
+            path: "/login",
+            element: <LoginPage />,
+          },
+          {
+            path: "/products",
+            element: <ProductsPage />,
+            loader: () => apiClient.get("/suppliers.json").then(response => response.data)
+          },
+          {
+            path: "/carted_products",
+            element: (
+              <ShopperRoute>
+                <CartedProductIndex />
+              </ShopperRoute>
+            ),
+            loader: () => authLoader("/carted_products.json")
+          },
+          {
+            path: "/orders",
+            element: (
+              <ShopperRoute>
+                <OrdersIndex />
+              </ShopperRoute>
+            ),
+            loader: () => authLoader("/orders.json")
+          },
+          {
+            path: "/orders/:id",
+            element: (
+              <ShopperRoute>
+                <OrdersShow />
+              </ShopperRoute>
+            ),
+            loader: ({params}) => authLoader(`/orders/${params.id}.json`)
+          },
+          {
+            path: "/products/new",
+            element: (
+              <AdminRoute>
+                <ProductsNew />
+              </AdminRoute>
+            ),
+            loader: () => authLoader("/suppliers.json")
+          },
+        ],
+      }
+    ]);
+
+    return <RouterProvider router={router} />;
+  }
+
   return (
-    <div className="w-full min-h-screen overflow-x-hidden">
-    <RouterProvider router={router} />
-    </div>
-    )
+    <AuthProvider>
+      <div className="w-full min-h-screen overflow-x-hidden">
+        <Router />
+      </div>
+    </AuthProvider>
+  )
 }
 
 export default App;
