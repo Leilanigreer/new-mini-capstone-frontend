@@ -2,7 +2,7 @@ import { CartedProductsNew } from "./CartedProductsNew";
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-export function ProductsShow({ product, onAddToCart }) {
+export function ProductsShow({ product, onAddToCart, userActions }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const nextImage = () => {
@@ -80,12 +80,14 @@ export function ProductsShow({ product, onAddToCart }) {
             </div>
 
             {/* Add to Cart Section */}
-            <div className="mt-6 border-t border-gray-200 pt-6">
-              <CartedProductsNew
-                product={product}
-                onAddToCart={onAddToCart}
-              />
-            </div>
+            {userActions.canAddToCart && (
+              <div className="mt-6 border-t border-gray-200 pt-6">
+                <CartedProductsNew
+                  product={product}
+                  onAddToCart={onAddToCart}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
