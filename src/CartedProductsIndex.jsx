@@ -1,15 +1,27 @@
 import { useLoaderData } from "react-router-dom";
 import apiClient from "./config/axios";
-import { ShoppingCart, Trash2, Plus, Minus } from 'lucide-react';
+import { ShoppingCart, Trash2, Plus, Minus, CheckCircle } from 'lucide-react';
 import { useState } from "react";
+
+const Notification = ({ message }) => (
+  <div className="mb-4 p-4 rounded-md bg-green-50 text-green-700 border border-green-200 flex items-center gap-2">
+    <CheckCircle className="h-4 w-4" />
+    <p>{message}</p>
+  </div>
+);
 
 export function CartedProductIndex() {
   const carted_products = useLoaderData();
   const [cartItems, setCartItems] = useState(carted_products);
+  const [showNotification, setShowNotification] = useState(false);
   
-  const totalAmount = cartItems.reduce((sum, cp) => 
-    sum + (cp.product.price * cp.product_quantity), 0
-  );
+  const subtotal = cartItems.reduce((sum, cp) => 
+    sum + (parseFloat(cp.product.price) * cp.product_quantity), 0
+  ).toFixed(2);
+  
+  const tax = (parseFloat(subtotal) * 0.09).toFixed(2);
+  
+  const totalAmount = (parseFloat(subtotal) + parseFloat(tax)).toFixed(2);
 
   const handleQuantityUpdate = (id, newQuantity) => {
     apiClient.patch(`/carted_products/${id}.json`, {
@@ -25,13 +37,28 @@ export function CartedProductIndex() {
     });
   };
 
-  const handleCheckout = (event) => {
+  const handleCheckout = async (event) => {
     event.preventDefault();
-    apiClient.post("/orders.json");
+    try {
+      await apiClient.post("/orders.json");
+      setShowNotification(true);
+      setCartItems([]); // Reset cart
+      
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 3000);
+    } catch (error) {
+      console.error('Error placing order:', error);
+    }
   };
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
+      {showNotification && (
+        <Notification message="Order placed successfully! Check your orders page for details." />
+      )}
+
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex items-center mb-6">
           <ShoppingCart className="h-6 w-6 text-green-700 mr-2" />
@@ -49,7 +76,7 @@ export function CartedProductIndex() {
                     <div className="flex-1">
                       <h3 className="text-lg font-medium text-gray-900">{cp.product.name}</h3>
                       <p className="mt-1 text-sm text-gray-500">
-                        ${cp.product.price} each
+                        ${parseFloat(cp.product.price).toFixed(2)} each
                       </p>
                     </div>
                     
@@ -93,9 +120,19 @@ export function CartedProductIndex() {
             </div>
 
             <div className="mt-6 pt-6 border-t border-gray-200">
-              <div className="flex justify-between text-lg font-medium">
-                <span>Total</span>
-                <span className="text-green-700">${totalAmount.toFixed(2)}</span>
+              <div className="space-y-2">
+                <div className="flex justify-between text-base text-gray-900">
+                  <span>Subtotal</span>
+                  <span>${subtotal}</span>
+                </div>
+                <div className="flex justify-between text-base text-gray-900">
+                  <span>Tax</span>
+                  <span>${tax}</span>
+                </div>
+                <div className="flex justify-between text-lg font-medium text-gray-900">
+                  <span>Total</span>
+                  <span className="text-green-700">${totalAmount}</span>
+                </div>
               </div>
               
               <button

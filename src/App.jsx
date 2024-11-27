@@ -13,19 +13,7 @@ import { WelcomePage } from "./Welcome";
 import { AuthProvider } from "./context/AuthProvider";
 import { useAuth } from './context/useAuth';
 
-// const ProtectedRoute = ({ children }) => {
-//   const { isAuthenticated, loading } = useAuth();
-  
-//   if (loading) {
-//     return <div>Loading...</div>; 
-//   }
-  
-//   if (!isAuthenticated) {
-//     return <Navigate to="/login" replace />;
-//   }
-  
-//   return children;
-// };
+
 
 // Admin route wrapper
 const AdminRoute = ({ children }) => {
@@ -98,7 +86,23 @@ function App() {
           {
             path: "/products",
             element: <ProductsPage />,
-            loader: () => apiClient.get("/suppliers.json").then(response => response.data)
+            loader: async () => {
+              const suppliers = await apiClient.get("/suppliers.json").then(response => response.data);
+              
+              let cartItems = {};
+              try {
+                const cartResponse = await apiClient.get("/carted_products.json");
+                // Transform the cart data into a map of product_id -> product_quantity
+                cartItems = cartResponse.data.reduce((acc, item) => {
+                  acc[item.product.id] = item.product_quantity;
+                  return acc;
+                }, {});
+              } catch (error) {
+                console.error("Error loading cart:", error);
+              }
+              
+              return { suppliers, cartItems };
+            }
           },
           {
             path: "/carted_products",

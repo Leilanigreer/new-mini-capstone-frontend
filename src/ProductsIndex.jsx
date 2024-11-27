@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 
 
-export function ProductsIndex({products, onShow, onAddToCart, onEdit, userActions}) {
+export function ProductsIndex({products, cartItems, onShow, onEdit, onAddToCart, userActions}) {
   const [searchFilter, setSearchFilter] = useState("");
   const [currentImageIndexes, setCurrentImageIndexes] = useState({});
 
@@ -109,6 +109,7 @@ export function ProductsIndex({products, onShow, onAddToCart, onEdit, userAction
                     <CartedProductsNew
                       product={product}
                       onAddToCart={onAddToCart}
+                      currentQuantity={cartItems[product.id] || 0}
                     />
                   </div>
                 )}

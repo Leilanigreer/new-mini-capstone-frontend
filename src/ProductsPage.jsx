@@ -9,19 +9,31 @@ import { useLoaderData } from 'react-router-dom';
 import { useAuth } from './context/useAuth';
 
 export function ProductsPage() {
+  const { suppliers, cartItems: initialCartItems } = useLoaderData();
   const [products, setProducts] = useState([]);
+  const [cartItems, setCartItems] = useState (initialCartItems || {});
   const [isProductsShowVisible, setIsProductsShowVisible] = useState(false);
   const [currentProduct, setCurrentProduct] = useState({});
-  const [cartedItems, setCartedItems] = useState ([]);
   const [isProductsEditVisable, setIsProductsEditVisable] = useState(false);
   const {isAdmin, isShopper} = useAuth();
 
-  const suppliers = useLoaderData ();
+  console.log(cartItems);
+  console.log(initialCartItems);
+  console.log(suppliers);
 
   const userActions = {
     canEdit: isAdmin,
     canAddToCart: isShopper,
     canViewDetails: true
+  };
+
+  const handleAddToCart = (cartedProduct) => {
+    setCartItems(prev => ({
+      ...prev,
+      ...(cartedProduct.product_quantity === 0 
+        ? { [cartedProduct.product_id]: undefined } 
+        : { [cartedProduct.product_id]: cartedProduct.product_quantity })
+    }));
   };
 
   const handleIndex = () => {
@@ -76,16 +88,13 @@ export function ProductsPage() {
     setIsProductsEditVisable(false);
   };
 
-  const handleAddToCart = (cartedProduct) => {
-    setCartedItems([...cartedItems, cartedProduct]);
-  };
-
   useEffect(handleIndex, []);
 
   return (
     <main>
       <ProductsIndex 
         products={products}
+        cartItems={cartItems}
         onShow={handleShow}
         onEdit={handleEdit} 
         onAddToCart={handleAddToCart}
@@ -93,7 +102,8 @@ export function ProductsPage() {
       />
       <ProductShowModal show={isProductsShowVisible} onClose={handleCloseShow}>
         <ProductsShow 
-        product={currentProduct} 
+        product={currentProduct}
+        cartItems={cartItems} 
         onAddToCart={handleAddToCart}
         userActions={userActions} 
         />

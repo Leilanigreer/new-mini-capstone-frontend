@@ -2,9 +2,9 @@ import { CartedProductsNew } from "./CartedProductsNew";
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-export function ProductsShow({ product, onAddToCart, userActions }) {
+export function ProductsShow({ product, cartItems, onAddToCart, userActions }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
+  
   const nextImage = () => {
     setCurrentImageIndex((prev) => 
       (prev + 1) % product.images_with_default.length
@@ -85,6 +85,7 @@ export function ProductsShow({ product, onAddToCart, userActions }) {
                 <CartedProductsNew
                   product={product}
                   onAddToCart={onAddToCart}
+                  currentQuantity={cartItems[product.id] || 0}
                 />
               </div>
             )}
