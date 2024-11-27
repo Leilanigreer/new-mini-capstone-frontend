@@ -1,19 +1,34 @@
 // src/components/auth/LoginPage.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Mail, Lock, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/useAuth';
 import { useNavigate } from 'react-router-dom';
 import apiClient from "../../config/axios";
+import { useLocation } from "react-router-dom";
+
 
 export function LoginPage() {
   const [errors, setErrors] = useState([]);
   const { login, getUserData } = useAuth();
+  const location = useLocation();
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.state?.message) {
+      setMessage(location.state.message);
+      const timer = setTimeout(() => {
+        setMessage("");
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [location]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrors([]);
     const params = new FormData(event.target);
+    params.set('email', params.get('email').toLocaleLowerCase());
     
     try {
       const response = await apiClient.post("/sessions.json", params);
@@ -38,8 +53,13 @@ export function LoginPage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
+      {message && (
+          <div className="mb-6 rounded-lg bg-green-50 p-4 text-green-700 items-center" role="alert">
+            {message}
+          </div>
+        )}
         <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
           Login to Shopping 4 US
         </h2>

@@ -1,30 +1,35 @@
 import { useState } from "react";
 import { Mail, Lock, User, AlertCircle } from 'lucide-react';
 import apiClient from "../../config/axios";
+import { useNavigate } from "react-router-dom";
 
 export function SignupPage() {
   const [errors, setErrors] = useState([]);
   const [userName, setUserName] = useState("");
+  const navigate = useNavigate();
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
     setErrors([]);
     const params = new FormData(event.target);
+    params.set('email', params.get('email').toLocaleLowerCase());
+
     apiClient
       .post("/users.json", params)
-      .then((response) => {
-        console.log(response.data);
+      .then(() => {
         event.target.reset();
-        window.location.href = "/";
+        navigate("/login", {
+          state: { message: "Signup successful! Login to start shopping." }
+        });
       })
       .catch((error) => {
-        console.log(error.response.data.errors);
         setErrors(error.response.data.errors);
       });
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
           Create your account

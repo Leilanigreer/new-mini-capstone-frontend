@@ -17,10 +17,6 @@ export function ProductsPage() {
   const [isProductsEditVisable, setIsProductsEditVisable] = useState(false);
   const {isAdmin, isShopper} = useAuth();
 
-  console.log(cartItems);
-  console.log(initialCartItems);
-  console.log(suppliers);
-
   const userActions = {
     canEdit: isAdmin,
     canAddToCart: isShopper,
@@ -43,7 +39,6 @@ export function ProductsPage() {
   };
 
   const handleShow = ( product ) => {
-    // console.log("handleShow", product);
     setIsProductsShowVisible(true);
     setCurrentProduct(product);
   };
@@ -55,7 +50,6 @@ export function ProductsPage() {
   
 
   const handleUpdate = ( id, params, successCallback ) =>{
-    // console.log("handleUpdate", params);
     apiClient.patch(`/products/${id}.json`, params).then((response) => {
       setProducts(
         products.map((product) => {
@@ -72,7 +66,6 @@ export function ProductsPage() {
   };
 
   const handleDestroy = (id) => {
-    // console.log("handleDestroy", id);
     apiClient.delete(`/products/${id}.json`).then(() => {
       setProducts(products.filter((product) => product.id !== id));
       handleCloseEdit();
@@ -80,7 +73,6 @@ export function ProductsPage() {
   };
   
   const handleCloseShow = () => {
-    // console.log("handleClose");
     setIsProductsShowVisible(false);
   };
 
