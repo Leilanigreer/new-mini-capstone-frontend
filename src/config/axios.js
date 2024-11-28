@@ -9,6 +9,7 @@ const baseURL = isDevelopment
 
 const apiClient = axios.create({
   baseURL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
