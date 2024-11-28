@@ -32,15 +32,15 @@ export function OrdersIndex() {
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <p className="text-sm text-gray-500">Subtotal</p>
-                  <p className="text-lg font-medium">${order.subtotal}</p>
+                  <p className="text-lg font-medium">${parseFloat(order.subtotal).toFixed(2)}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Tax</p>
-                  <p className="text-lg font-medium">${order.tax}</p>
+                  <p className="text-lg font-medium">${parseFloat(order.tax).toFixed(2)}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Total</p>
-                  <p className="text-lg font-medium text-green-700">${order.total}</p>
+                  <p className="text-lg font-medium text-green-700">${parseFloat(order.total).toFixed(2)}</p>
                 </div>
               </div>
             </div>

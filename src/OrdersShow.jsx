@@ -19,15 +19,15 @@ export function OrdersShow() {
           <div className="grid grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-gray-500">Subtotal</p>
-              <p className="text-lg font-medium">${order.subtotal}</p>
+              <p className="text-lg font-medium">${parseFloat(order.subtotal).toFixed(2)}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Tax</p>
-              <p className="text-lg font-medium">${order.tax}</p>
+              <p className="text-lg font-medium">${parseFloat(order.tax).toFixed(2)}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Total</p>
-              <p className="text-lg font-medium text-green-700">${order.total}</p>
+              <p className="text-lg font-medium text-green-700">${parseFloat(order.total).toFixed(2)}</p>
             </div>
           </div>
         </div>
@@ -41,8 +41,8 @@ export function OrdersShow() {
                   <p className="mt-1 text-sm text-gray-500">Quantity: {cp.product_quantity}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-gray-500">Price per item: ${cp.purchased_price}</p>
-                  <p className="text-lg font-medium text-green-700">Total: ${cp.total_carted_price}</p>
+                  <p className="text-sm text-gray-500">Price per item: ${parseFloat(cp.purchased_price).toFixed(2)}</p>
+                  <p className="text-lg font-medium text-green-700">Total: ${parseFloat(cp.total_carted_price).toFixed(2)}</p>
                 </div>
               </div>
             </div>
