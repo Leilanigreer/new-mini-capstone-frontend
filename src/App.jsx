@@ -19,9 +19,9 @@ import { CartProvider } from "./context/CartProvider";
 
 const Layout = () => {
   return (
-    <div className="min-h-screen w-full flex-col">
+    <div className="min-h-screen w-full flex flex-col">
       <Header />
-      <main className="flex-grow w-full">
+      <main className="flex-1 w-full">
         <Outlet />
       </main>
       <Footer />
@@ -122,7 +122,7 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <div className="w-full min-h-screen overflow-x-hidden">
+        <div className="w-full overflow-x-hidden">
           <Router />
         </div>
       </CartProvider>
