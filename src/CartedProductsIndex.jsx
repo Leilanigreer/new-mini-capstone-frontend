@@ -1,7 +1,8 @@
 import { useLoaderData } from "react-router-dom";
-import apiClient from "./config/axios";
 import { ShoppingCart, Trash2, Plus, Minus, CheckCircle } from 'lucide-react';
 import { useState } from "react";
+import { useCart } from "./context/CartContext";
+import apiClient from "./config/axios";
 
 const Notification = ({ message }) => (
   <div className="mb-4 p-4 rounded-md bg-green-50 text-green-700 border border-green-200 flex items-center gap-2">
@@ -11,8 +12,9 @@ const Notification = ({ message }) => (
 );
 
 export function CartedProductIndex() {
-  const carted_products = useLoaderData();
-  const [cartItems, setCartItems] = useState(carted_products);
+  const initialCartItems = useLoaderData();
+  const { updateCartItems, fetchCartItems } = useCart();
+  const [cartItems, setCartItems] = useState(initialCartItems);
   const [showNotification, setShowNotification] = useState(false);
   
   const subtotal = cartItems.reduce((sum, cp) => 
@@ -20,21 +22,23 @@ export function CartedProductIndex() {
   ).toFixed(2);
   
   const tax = (parseFloat(subtotal) * 0.09).toFixed(2);
-  
   const totalAmount = (parseFloat(subtotal) + parseFloat(tax)).toFixed(2);
 
-  const handleQuantityUpdate = (id, newQuantity) => {
-    apiClient.patch(`/carted_products/${id}.json`, {
-      product_quantity: newQuantity
-    }).then(response => {
+  const handleQuantityUpdate = async (cp, newQuantity) => {
+    try {
+      await updateCartItems(cp.product.id, newQuantity);
       if (newQuantity === 0) {
-        setCartItems(cartItems.filter(item => item.id !== id));
+        setCartItems(cartItems.filter(item => item.id !== cp.id));
       } else {
         setCartItems(cartItems.map(item => 
-          item.id === id ? response.data : item
+          item.id === cp.id 
+            ? { ...item, product_quantity: newQuantity }
+            : item
         ));
       }
-    });
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+    }
   };
 
   const handleCheckout = async (event) => {
@@ -42,9 +46,9 @@ export function CartedProductIndex() {
     try {
       await apiClient.post("/orders.json");
       setShowNotification(true);
-      setCartItems([]); // Reset cart
+      setCartItems([]);
+      await fetchCartItems();
       
-      // Hide notification after 3 seconds
       setTimeout(() => {
         setShowNotification(false);
       }, 3000);
@@ -83,7 +87,7 @@ export function CartedProductIndex() {
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center space-x-2">
                         <button 
-                          onClick={() => handleQuantityUpdate(cp.id, cp.product_quantity - 1)}
+                          onClick={() => handleQuantityUpdate(cp, cp.product_quantity - 1)}
                           className="p-1 rounded-full hover:bg-gray-100"
                         >
                           <Minus className="h-4 w-4 text-gray-600" />
@@ -94,7 +98,7 @@ export function CartedProductIndex() {
                         </span>
                         
                         <button 
-                          onClick={() => handleQuantityUpdate(cp.id, cp.product_quantity + 1)}
+                          onClick={() => handleQuantityUpdate(cp, cp.product_quantity + 1)}
                           className="p-1 rounded-full hover:bg-gray-100"
                         >
                           <Plus className="h-4 w-4 text-gray-600" />
@@ -108,7 +112,7 @@ export function CartedProductIndex() {
                       </div>
 
                       <button
-                        onClick={() => handleQuantityUpdate(cp.id, 0)}
+                        onClick={() => handleQuantityUpdate(cp, 0)}
                         className="p-1 rounded-full hover:bg-red-100"
                       >
                         <Trash2 className="h-5 w-5 text-red-500" />

@@ -1,14 +1,14 @@
 import { CartedProductsNew } from "./CartedProductsNew";
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useCart } from "./context/CartContext";
 
-export function ProductsShow({ product, cartItems, onAddToCart, userActions }) {
+export function ProductsShow({ product, userActions }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { cartItems } = useCart();
   
   const nextImage = () => {
-    setCurrentImageIndex((prev) => 
-      (prev + 1) % product.images_with_default.length
-    );
+    setCurrentImageIndex((prev) => (prev + 1) % product.images_with_default.length);
   };
 
   const prevImage = () => {
@@ -21,6 +21,7 @@ export function ProductsShow({ product, cartItems, onAddToCart, userActions }) {
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Image section */}
           <div className="relative aspect-square bg-gray-100">
             <img
               src={product.images_with_default[currentImageIndex].url}
@@ -45,7 +46,7 @@ export function ProductsShow({ product, cartItems, onAddToCart, userActions }) {
             )}
           </div>
 
-          {/* Product Details Section */}
+          {/* Details section */}
           <div className="p-6 flex flex-col">
             <div className="flex-grow">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">
@@ -79,13 +80,11 @@ export function ProductsShow({ product, cartItems, onAddToCart, userActions }) {
               </div>
             </div>
 
-            {/* Add to Cart Section */}
             {userActions.canAddToCart && (
               <div className="mt-6 border-t border-gray-200 pt-6">
                 <CartedProductsNew
                   product={product}
-                  onAddToCart={onAddToCart}
-                  currentQuantity={cartItems[product.id] || 0}
+                  currentQuantity={cartItems[product.id]?.quantity || 0}
                 />
               </div>
             )}

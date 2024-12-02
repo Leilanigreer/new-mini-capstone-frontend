@@ -1,4 +1,4 @@
-import {createBrowserRouter, RouterProvider, Outlet, Navigate } from "react-router-dom"
+import {createBrowserRouter, RouterProvider, Outlet } from "react-router-dom"
 import apiClient from "./config/axios";
 import Header from "./components/layout/Header";
 import { ProductsPage } from "./ProductsPage";
@@ -11,47 +11,11 @@ import { OrdersShow } from "./OrdersShow";
 import { ProductsNew } from "./ProductsNew";
 import { WelcomePage } from "./Welcome";
 import { AuthProvider } from "./context/AuthProvider";
-import { useAuth } from './context/useAuth';
+import { shopperLoader, adminLoader, authLoader } from "./loaders/protectedLoaders";
+import { AdminRoute, ShopperRoute } from "./components/auth/ProtectedRoutes";
+import { CartProvider } from "./context/CartProvider";
 
 
-
-// Admin route wrapper
-const AdminRoute = ({ children }) => {
-  const { isAdmin, loading } = useAuth();
-  
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-  
-  if (!isAdmin) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  return children;
-};
-
-// Shopper route wrapper
-const ShopperRoute = ({ children }) => {
-  const { isShopper, loading } = useAuth();
-  
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-  
-  if (!isShopper) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  return children;
-};
-
-const authLoader = async (path) => {
-  const token = localStorage.getItem('jwt');
-  if (token) {
-    apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  }
-  return apiClient.get(path).then(response => response.data);
-};
 
 const Layout = () => {
   return (
@@ -89,16 +53,24 @@ function App() {
             loader: async () => {
               const suppliers = await apiClient.get("/suppliers.json").then(response => response.data);
               
+              const token = localStorage.getItem('jwt');
               let cartItems = {};
-              try {
-                const cartResponse = await apiClient.get("/carted_products.json");
-                // Transform the cart data into a map of product_id -> product_quantity
-                cartItems = cartResponse.data.reduce((acc, item) => {
-                  acc[item.product.id] = item.product_quantity;
-                  return acc;
-                }, {});
-              } catch (error) {
-                console.error("Error loading cart:", error);
+              
+              if (token) {
+                try {
+                  apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+                  const cartResponse = await apiClient.get("/carted_products.json");
+                  cartItems = cartResponse.data.reduce((acc, item) => {
+                    acc[item.product.id] = item.product_quantity;
+                    return acc;
+                  }, {});
+                } catch (error) {
+                  console.error("Error loading cart:", error);
+                  if (error.response?.status === 401) {
+                    localStorage.removeItem('jwt');
+                    delete apiClient.defaults.headers.common["Authorization"];
+                  }
+                }
               }
               
               return { suppliers, cartItems };
@@ -111,7 +83,7 @@ function App() {
                 <CartedProductIndex />
               </ShopperRoute>
             ),
-            loader: () => authLoader("/carted_products.json")
+            loader: shopperLoader(() => authLoader("/carted_products.json"))
           },
           {
             path: "/orders",
@@ -120,7 +92,7 @@ function App() {
                 <OrdersIndex />
               </ShopperRoute>
             ),
-            loader: () => authLoader("/orders.json")
+            loader: shopperLoader(() => authLoader("/orders.json"))
           },
           {
             path: "/orders/:id",
@@ -129,7 +101,7 @@ function App() {
                 <OrdersShow />
               </ShopperRoute>
             ),
-            loader: ({params}) => authLoader(`/orders/${params.id}.json`)
+            loader: shopperLoader(({params}) => authLoader(`/orders/${params.id}.json`))
           },
           {
             path: "/products/new",
@@ -138,8 +110,8 @@ function App() {
                 <ProductsNew />
               </AdminRoute>
             ),
-            loader: () => authLoader("/suppliers.json")
-          },
+            loader: adminLoader(() => authLoader("/suppliers.json"))
+          }
         ],
       }
     ]);
@@ -149,11 +121,13 @@ function App() {
 
   return (
     <AuthProvider>
-      <div className="w-full min-h-screen overflow-x-hidden">
-        <Router />
-      </div>
+      <CartProvider>
+        <div className="w-full min-h-screen overflow-x-hidden">
+          <Router />
+        </div>
+      </CartProvider>
     </AuthProvider>
-  )
+  );
 }
 
 export default App;

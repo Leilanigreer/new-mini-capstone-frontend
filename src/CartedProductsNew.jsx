@@ -1,95 +1,54 @@
-import { useState, useEffect } from "react";
-import apiClient from "./config/axios";
-import { ShoppingCart, Trash2, ChevronDown } from 'lucide-react';
+import { useState } from "react";
+import { Minus, Plus } from "lucide-react";
+import { useCart } from "./context/CartContext";
 
-export function CartedProductsNew ({ product, onAddToCart, currentQuantity = 0 }) {
-  const [productQuantity, setProductQuantity] = useState(currentQuantity || 1);
-  const [cartItemId, setCartItemId] = useState(null);
+export function CartedProductsNew({ product, currentQuantity = 0 }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const { updateCartItems } = useCart();
 
-  useEffect(() => {
-    if (currentQuantity > 0) {
-      apiClient.get("/carted_products.json")
-        .then(response => {
-          const cartItem = response.data.find(item => 
-            item.product.id === product.id && item.status === "carted"
-          );
-          if (cartItem) {
-            setCartItemId(cartItem.id);
-          }
-        })
-        .catch(error => console.error("Error fetching cart item:", error));
-    }
-  }, [product.id, currentQuantity]);
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleUpdateCart = async (newQuantity) => {
+    if (isLoading) return;
+    setIsLoading(true);
     
-    if (cartItemId) {
-      apiClient.patch(`/carted_products/${cartItemId}.json`, {
-        product_quantity: productQuantity
-      }).then(response => {
-        if (productQuantity === 0) {
-          setCartItemId(null);
-          setProductQuantity(1);
-        }
-        onAddToCart(response.data);
-      });
-    } else {
-      apiClient.post("/carted_products.json", {
-        product_id: product.id,
-        product_quantity: productQuantity
-      })
-      .then((response) => {
-        setCartItemId(response.data.id);
-        onAddToCart(response.data);
-      });
+    try {
+      await updateCartItems(product.id, newQuantity);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  return(
-    <form onSubmit={handleSubmit} className="space-y-3">
-      <div className="flex items-center space-x-3">
-        <div className="relative flex-1">
-          <select
-            id={`quantity-${product.id}`}
-            value={productQuantity}
-            onChange={(e) => setProductQuantity(parseInt(e.target.value) || 0)}
-            className="block w-full text-center pl-3 pr-8 py-2 border border-gray-300 rounded-md shadow-sm text-gray-700 text-sm focus:ring-1 focus:ring-green-700 focus:border-green-700 appearance-none"
-          >
-            {[...Array(10)].map((_, i) => (
-              <option key={i} value={i}>
-                {i}
-              </option>
-            ))}
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-            <ChevronDown className="h-4 w-4 text-gray-900" />
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <button 
-          type="submit"
-          className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-700 transition-colors duration-200"
-        >
-          <ShoppingCart className="w-4 h-4 mr-2" />
-          {currentQuantity > 0 ? "Update Cart" : "Add to Cart"}
-        </button>
-
-        {currentQuantity > 0 && cartItemId && (
-          <button 
-            onClick={(e) => {
-              e.preventDefault();
-              handleSubmit(e, 0);
-            }}
-            className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-red-600 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Remove from Cart
-          </button>
-        )}
-      </div>
-    </form>
+  return currentQuantity === 0 ? (
+    <button
+      onClick={() => handleUpdateCart(1)}
+      disabled={isLoading}
+      className="w-full bg-green-700 text-white font-medium px-4 py-2 rounded-md 
+                 hover:bg-green-800 transition-colors duration-200 disabled:opacity-50"
+    >
+      Add
+    </button>
+  ) : (
+    <div className="flex items-center justify-between w-full border border-gray-300 rounded-md">
+      <button
+        onClick={() => handleUpdateCart(currentQuantity - 1)}
+        disabled={isLoading}
+        className="p-2 text-green-700 hover:bg-gray-100 rounded-l-md 
+                 transition-colors duration-200 disabled:opacity-50"
+      >
+        <Minus className="w-5 h-5" />
+      </button>
+      
+      <span className="flex-1 text-center font-medium">
+        {currentQuantity}
+      </span>
+      
+      <button
+        onClick={() => handleUpdateCart(currentQuantity + 1)}
+        disabled={isLoading}
+        className="p-2 text-green-700 hover:bg-gray-100 rounded-r-md 
+                 transition-colors duration-200 disabled:opacity-50"
+      >
+        <Plus className="w-5 h-5" />
+      </button>
+    </div>
   );
 }
