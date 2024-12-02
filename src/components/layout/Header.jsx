@@ -16,10 +16,10 @@ const Header = () => {
   };
 
   const authenticationLinks = !isAuthenticated ? (
-    <div className="flex gap-4">
+    <div className="flex items-center gap-4">
       <Link 
         to="/signup" 
-        className="text-sm md:text-xs lg:text-base text-green-700 hover:text-green-900 relative group"
+        className="text-sm md:text-xs lg:text-base text-green-700 hover:text-green-900 px-2 py-2 rounded-md font-medium relative "
         onMouseEnter={() => setHoveredLink('signup')}
         onMouseLeave={() => setHoveredLink(null)}
       >
@@ -28,7 +28,7 @@ const Header = () => {
       </Link>
       <Link 
         to="/login" 
-        className="text-sm md:text-sm lg:text-base text-green-700 hover:text-green-900 relative group"
+        className="text-sm md:text-xs lg:text-base text-green-700 hover:text-green-900 px-2 py-2 rounded-md font-medium relative "
         onMouseEnter={() => setHoveredLink('login')}
         onMouseLeave={() => setHoveredLink(null)}
       >
@@ -37,9 +37,9 @@ const Header = () => {
       </Link>
     </div>
   ) : (
-    <div className="flex gap-4 items-center">
+    <div className="flex gap-4 ">
       <span className="text-sm md:text-xs lg:text-base text-gray-700 font-medium">Hi, {formatName(currentUser?.name)}</span>
-      <LogoutLink className="text-sm md:text-sm lg:text-base"/>
+      <LogoutLink className="text-sm md:text-xs lg:text-base"/>
     </div>
   );
 
