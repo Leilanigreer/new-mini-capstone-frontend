@@ -35,15 +35,11 @@ export function CartProvider({ children }) {
     setLoading(true);
     const token = localStorage.getItem('jwt');
     if (!token) return;
-
+  
     try {
       const cartEntry = cartItems[productId];
       
-      if (quantity === 0) {
-        if (cartEntry) {
-          await apiClient.delete(`/carted_products/${cartEntry.id}.json`);
-        }
-      } else if (cartEntry) {
+      if (cartEntry) {
         await apiClient.patch(`/carted_products/${cartEntry.id}.json`, {
           product_quantity: quantity
         });
