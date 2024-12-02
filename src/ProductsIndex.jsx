@@ -76,36 +76,20 @@ export function ProductsIndex({products, cartItems, onShow, onEdit, onAddToCart,
               )}
             </div>
             <div className="p-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {product.name}
-              </h3>
-              <p className="text-green-700 font-medium text-lg mb-4">
+              <p className="text-green-700 font-medium text-lg mb-1">
                 ${parseFloat(product.price).toFixed(2)}
               </p>
-
-              <div className="space-y-2">
-                {userActions.canViewDetails && ( 
-                  <button
-                  onClick={() => onShow(product)}
-                  className="w-full bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800 
-                           transition-colors duration-200"
-                >
-                  More Info
-                </button>
-                )}
-
-                {userActions.canEdit && (
-                  <button
-                    onClick={() => onEdit(product)}
-                    className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 
-                            transition-colors duration-200"
-                  >
-                    Edit
-                  </button>
-                )}
-
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                {product.name}
+              </h3>
+              <p className="text-gray-700 font-normal text-sm">
+                {product.description}
+              </p>
+              
+              <div className="space-y-2 pt-2">
+                {/* Cart functionality only for shoppers */}
                 {userActions.canAddToCart && (
-                  <div className="pt-2">
+                  <div className="pb-2">
                     <CartedProductsNew
                       product={product}
                       onAddToCart={onAddToCart}
@@ -113,6 +97,42 @@ export function ProductsIndex({products, cartItems, onShow, onEdit, onAddToCart,
                     />
                   </div>
                 )}
+
+                {/* Button container */}
+                <div className={`${userActions.canEdit ? 'pt-0' : 'pt-2'}`}>
+                  {/* More Info button for shoppers */}
+                  {userActions.canAddToCart && (
+                    <button
+                      onClick={() => onShow(product)}
+                      className="w-full bg-gray-100 text-green-700 px-4 py-2 rounded-md hover:bg-gray-200
+                                transition-colors duration-200"
+                    >
+                      More Info
+                    </button>
+                  )}
+
+                  {/* More Info button for non-logged in users */}
+                  {userActions.canViewDetails && !userActions.canAddToCart && !userActions.canEdit && (
+                    <button
+                      onClick={() => onShow(product)}
+                      className="w-full bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800
+                                transition-colors duration-200"
+                    >
+                      More Info
+                    </button>
+                  )}
+
+                  {/* Edit button for admin */}
+                  {userActions.canEdit && (
+                    <button
+                      onClick={() => onEdit(product)}
+                      className="w-full bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800
+                              transition-colors duration-200"
+                    >
+                      Edit
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>

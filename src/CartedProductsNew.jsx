@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import apiClient from "./config/axios";
-import { ShoppingCart, Trash2 } from 'lucide-react';
+import { ShoppingCart, Trash2, ChevronDown } from 'lucide-react';
 
 export function CartedProductsNew ({ product, onAddToCart, currentQuantity = 0 }) {
   const [productQuantity, setProductQuantity] = useState(currentQuantity || 1);
@@ -49,21 +49,22 @@ export function CartedProductsNew ({ product, onAddToCart, currentQuantity = 0 }
   return(
     <form onSubmit={handleSubmit} className="space-y-3">
       <div className="flex items-center space-x-3">
-        <label 
-          htmlFor={`quantity-${product.id}`}
-          className="text-sm font-medium text-gray-700"
-        >
-          Quantity: 
-        </label>
         <div className="relative flex-1">
-          <input
+          <select
             id={`quantity-${product.id}`}
-            type="number"
-            min="0"
             value={productQuantity}
-            onChange={(e) => setProductQuantity(parseInt(e.target.value) || 0)} 
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-700 text-sm focus:ring-1 focus:ring-green-700 focus:border-green-700"
-          />
+            onChange={(e) => setProductQuantity(parseInt(e.target.value) || 0)}
+            className="block w-full text-center pl-3 pr-8 py-2 border border-gray-300 rounded-md shadow-sm text-gray-700 text-sm focus:ring-1 focus:ring-green-700 focus:border-green-700 appearance-none"
+          >
+            {[...Array(10)].map((_, i) => (
+              <option key={i} value={i}>
+                {i}
+              </option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+            <ChevronDown className="h-4 w-4 text-gray-900" />
+          </div>
         </div>
       </div>
 

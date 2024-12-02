@@ -1,3 +1,4 @@
+// src/ProductsPage.jsx
 import { useState, useEffect } from 'react';
 import apiClient from "./config/axios";
 import { ProductsIndex } from './ProductsIndex';
@@ -20,7 +21,7 @@ export function ProductsPage() {
   const userActions = {
     canEdit: isAdmin,
     canAddToCart: isShopper,
-    canViewDetails: true
+    canViewDetails: !isAdmin
   };
 
   const handleAddToCart = (cartedProduct) => {
