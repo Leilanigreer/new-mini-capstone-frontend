@@ -1,7 +1,11 @@
 import { ShoppingBag, Truck, CreditCard, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from './context/useAuth';
 
 export function WelcomePage() {
+  // Adding authentication context
+  const { isAdmin, isShopper } = useAuth();
+
   const features = [
     {
       name: 'Easy Shopping',
@@ -25,6 +29,76 @@ export function WelcomePage() {
     }
   ];
 
+  // Helper function to render the appropriate button pair based on user role
+  const renderButtons = () => {
+    if (isAdmin) {
+      return (
+        <>
+          <div className="w-full sm:w-auto">
+            <Link
+              to="/products"
+              className="w-full sm:w-56 flex items-center justify-center px-6 sm:px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-700 hover:bg-green-800 md:text-lg md:px-10"
+            >
+              Review Products
+            </Link>
+          </div>
+          <div className="mt-3 w-full sm:w-auto sm:mt-0 sm:ml-3">
+            <Link
+              to="/products/new"
+              className="w-full sm:w-56 flex items-center justify-center px-6 sm:px-8 py-3 border border-transparent text-base font-medium rounded-md text-green-700 bg-white hover:bg-gray-50 md:text-lg md:px-10"
+            >
+              Add Product
+            </Link>
+          </div>
+        </>
+      );
+    }
+
+    if (isShopper) {
+      return (
+        <>
+          <div className="w-full sm:w-auto">
+            <Link
+              to="/products"
+              className="w-full sm:w-56 flex items-center justify-center px-6 sm:px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-700 hover:bg-green-800 md:text-lg md:px-10"
+            >
+              Start Shopping
+            </Link>
+          </div>
+          <div className="mt-3 w-full sm:w-auto sm:mt-0 sm:ml-3">
+            <Link
+              to="/orders"
+              className="w-full sm:w-56 flex items-center justify-center px-6 sm:px-8 py-3 border border-transparent text-base font-medium rounded-md text-green-700 bg-white hover:bg-gray-50 md:text-lg md:px-10"
+            >
+              My Orders
+            </Link>
+          </div>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <div className="w-full sm:w-auto">
+          <Link
+            to="/products"
+            className="w-full sm:w-56 flex items-center justify-center px-6 sm:px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-700 hover:bg-green-800 md:text-lg md:px-10"
+          >
+            Browse Products
+          </Link>
+        </div>
+        <div className="mt-3 w-full sm:w-auto sm:mt-0 sm:ml-3">
+          <Link
+            to="/signup"
+            className="w-full sm:w-56 flex items-center justify-center px-6 sm:px-8 py-3 border border-transparent text-base font-medium rounded-md text-green-700 bg-white hover:bg-gray-50 md:text-lg md:px-10"
+          >
+            Sign Up
+          </Link>
+        </div>
+      </>
+    );
+  };
+
   return (
     <div className="bg-white min-h-screen w-full">
       {/* Hero Section */}
@@ -44,22 +118,7 @@ export function WelcomePage() {
               Your one-stop destination for all your shopping needs. Discover amazing products at great prices.
             </p>
             <div className="mt-4 max-w-md mx-auto sm:flex sm:justify-center md:mt-6 pb-12 md:pb-16">
-              <div className="w-full sm:w-auto">
-                <Link
-                  to="/products"
-                  className="w-full sm:w-52 flex items-center justify-center px-6 sm:px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-700 hover:bg-green-800 md:text-lg md:px-10"
-                >
-                  Start Shopping
-                </Link>
-              </div>
-              <div className="mt-3 w-full sm:w-auto sm:mt-0 sm:ml-3">
-                <Link
-                  to="/signup"
-                  className="w-full sm:w-52 flex items-center justify-center px-6 sm:px-8 py-3 border border-transparent text-base font-medium rounded-md text-green-700 bg-white hover:bg-gray-50 md:text-lg md:px-10"
-                >
-                  Sign Up
-                </Link>
-              </div>
+              {renderButtons()}
             </div>
           </div>
         </div>
@@ -76,9 +135,9 @@ export function WelcomePage() {
           <div className="mt-8">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {features.map((feature) => (
-                <div key={feature.name} className="pt-6">
-                  <div className="flow-root bg-gray-50 rounded-lg px-4 sm:px-6 pb-8">
-                    <div className="-mt-6">
+                <div key={feature.name} className="pt-6 h-full">
+                  <div className=" bg-gray-50 rounded-lg px-4 sm:px-6 pb-8 h-full flex flex-col">
+                    <div className="-mt-6 flex-1 flex flex-col">
                       <div>
                         <span className="inline-flex items-center justify-center p-3 bg-green-700 rounded-md shadow-lg">
                           <feature.icon className="h-6 w-6 text-white" aria-hidden="true" />
@@ -87,7 +146,7 @@ export function WelcomePage() {
                       <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">
                         {feature.name}
                       </h3>
-                      <p className="mt-5 text-base text-gray-500">
+                      <p className="mt-5 text-base text-gray-500 flex-1">
                         {feature.description}
                       </p>
                     </div>

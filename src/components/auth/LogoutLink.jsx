@@ -8,12 +8,10 @@ export function LogoutLink({ className }) {
 
   const handleClick = (event) => {
     event.preventDefault();
-    logout(); // Use the logout function from AuthContext
+    logout(); 
     navigate('/');
   };
 
-  // We're updating the return statement to include the animation classes
-  // The structure matches our other navigation links for consistency
   return (
     <a 
       href="/" 

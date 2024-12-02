@@ -25,7 +25,6 @@ export function ProductsIndex({products, onShow, onEdit, userActions}) {
 
   return(
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Search input remains the same */}
       <div className="mb-8">
         <div className="relative max-w-md mx-auto">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -48,7 +47,6 @@ export function ProductsIndex({products, onShow, onEdit, userActions}) {
           .filter((product) => product.name.toLowerCase().includes(searchFilter.toLowerCase()))
           .map((product) => (
             <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-              {/* Image section remains the same */}
               <div className="relative aspect-square overflow-hidden bg-gray-200">
                 <img
                   src={product.images_with_default[currentImageIndexes[product.id] || 0].url}
